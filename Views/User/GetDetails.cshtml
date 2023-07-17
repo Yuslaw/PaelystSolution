@@ -1,0 +1,58 @@
+﻿@model PaelystSolution.Domain.Entities.User;
+
+@{
+    ViewBag.Title = "User Details";
+}
+
+<h2 style="text-align: center;">User Details</h2>
+
+<div style="margin-bottom: 20px;">
+    <h3>User Information</h3>
+    <table class="table" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">User ID</th>
+            <td style="padding: 8px; border: 1px solid #ddd;">@Model.UserId</td>
+        </tr>
+        <tr>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">User Name</th>
+            <td style="padding: 8px; border: 1px solid #ddd;">@Model.UserName</td>
+        </tr>
+        <tr>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">User Email</th>
+            <td style="padding: 8px; border: 1px solid #ddd;">@Model.UserEmail</td>
+        </tr>
+    </table>
+</div>
+
+<div>
+    <h3>User Documents</h3>
+    <table class="table" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">Document ID</th>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">Title</th>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">Document Type</th>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">Document Size</th>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">Document Path</th>
+        </tr>
+        @foreach (var document in Model.Documents)
+        {
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">@document.DocumentId</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">@document.Title</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">@document.DocumentType</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">@document.DocumentSize</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">
+                    @if (!string.IsNullOrEmpty(document.DocumentPath))
+                    {
+                        var relativePath = Url.Content("~/" + document.DocumentPath.Substring(document.DocumentPath.IndexOf("wwwroot") + 8));
+                        <a href="@relativePath" target="_blank" style="text-decoration: none; color: #4caf50;">View Document</a>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+
+

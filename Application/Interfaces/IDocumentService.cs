@@ -1,0 +1,12 @@
+﻿using PaelystSolution.Application.Dtos;
+using PaelystSolution.Domain.Entities;
+
+
+namespace PaelystSolution.Application.Interfaces
+{
+    public interface IDocumentService
+    {
+        DocumentsResponse CreateDocument(IList<IFormFile> documents);
+        Task<IList<Document>> GetUserDocuments(string email);
+    }
+}
