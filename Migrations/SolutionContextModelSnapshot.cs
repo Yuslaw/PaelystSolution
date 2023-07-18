@@ -46,8 +46,8 @@ namespace PaelystSolution.Migrations
                     b.Property<long?>("DocumentSize")
                         .HasColumnType("bigint");
 
-                    b.Property<byte[]>("DocumentStream")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("DocumentStream")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DocumentType")
                         .HasColumnType("nvarchar(max)");
@@ -78,11 +78,17 @@ namespace PaelystSolution.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("DeletedBy")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");

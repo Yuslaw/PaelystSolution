@@ -6,7 +6,7 @@ namespace PaelystSolution.Application.Interfaces
 {
     public interface IDocumentService
     {
-        DocumentsResponse CreateDocument(IList<IFormFile> documents);
+        DocumentsResponseModel CreateDocument(IList<IFormFile> documents);
         Task<IList<Document>> GetUserDocuments(string email);
     }
 }

@@ -21,6 +21,14 @@
             <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">User Email</th>
             <td style="padding: 8px; border: 1px solid #ddd;">@Model.UserEmail</td>
         </tr>
+        <tr>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">User Gender</th>
+            <td  style="padding: 8px; border: 1px solid #ddd;">@Model.Gender</td>
+        </tr>
+        <tr>
+            <th style="padding: 8px; border: 1px solid #ddd; background-color: #f9f9f9;">User Date Of Birth</th>
+            <td style="padding: 8px; border: 1px solid #ddd;">@Model.DateOfBirth</td>
+        </tr>
     </table>
 </div>
 
@@ -42,11 +50,10 @@
                 <td style="padding: 8px; border: 1px solid #ddd;">@document.DocumentType</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">@document.DocumentSize</td>
                 <td style="padding: 8px; border: 1px solid #ddd;">
-                    @if (!string.IsNullOrEmpty(document.DocumentPath))
-                    {
-                        var relativePath = Url.Content("~/" + document.DocumentPath.Substring(document.DocumentPath.IndexOf("wwwroot") + 8));
-                        <a href="@relativePath" target="_blank" style="text-decoration: none; color: #4caf50;">View Document</a>
-                    }
+                    
+
+                        <a href="/Uploads/@document.Title" target="_blank">Details</a>
+                   
                 </td>
             </tr>
         }

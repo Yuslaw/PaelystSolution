@@ -15,7 +15,9 @@ namespace PaelystSolution.Application.Dtos
         [Required]
         [RegularExpression(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$", ErrorMessage = "Invalid email address")]
         [Display(Name = "Enter a valid mail")]
+        public Gender Gender { get; set; }
         public string UserEmail { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public IList<IFormFile> BrowseDocuments { get; set; }
     }
 
@@ -37,13 +39,6 @@ namespace PaelystSolution.Application.Dtos
         public Guid UserId { get; set; }
     }
 
-    public class DocumentDto
-    {
-        public string Title { get; set; }
-        public long Size { get; set; }
-        public string Type { get; set; }
-        public byte[] DocumentStream { get; set; }
-        public string DocumentPath { get; set; }
-    }
+    
 
 }

@@ -1,4 +1,5 @@
-﻿using PaelystSolution.Application.Dtos;
+﻿using Microsoft.AspNetCore.Hosting;
+using PaelystSolution.Application.Dtos;
 using PaelystSolution.Application.Interfaces;
 using PaelystSolution.Domain.Entities;
 using PaelystSolution.Infrastructure.Interfaces;
@@ -62,16 +63,16 @@ namespace PaelystSolution.Application.Implementations
             }
 
             var documented = CreateDocument(model.BrowseDocuments);
-            var attached = documented.Data
+            var attached = documented.Datas
             .Select(dto => new Document
             {
 
-                Title = dto.Title,
-                DocumentSize = dto.Size,
-                DocumentStream = dto.DocumentStream,
-                DocumentType = dto.Type,
-                DocumentPath = dto.DocumentPath,
-               
+                Title = dto.Name,
+                DocumentSize = dto.Filesize,
+                DocumentType = dto.FileType,
+                DocumentStream = dto.Name,
+                DocumentPath= dto.Extension,
+                
             })
             .ToList();
 
@@ -79,15 +80,15 @@ namespace PaelystSolution.Application.Implementations
             var attachmentList3 = new List<SendSmtpEmailAttachment>();
 
 
-            foreach (var document in attached)
+            foreach (var document in documented.Datas)
             {
-
-                var path = Path.Combine(_webroot.WebRootPath, "Yuslaw", document.DocumentType);
 
                 var mail = new SendSmtpEmailAttachment
                 {
                     Name = document.Title,
-                    Content = File.ReadAllBytes(path),
+
+                    Content = File.ReadAllBytes(Path.Combine(_webroot.WebRootPath, "Uploads", document.Name)),
+
                 };
                 attachmentList3.Add(mail);
 
@@ -104,6 +105,9 @@ namespace PaelystSolution.Application.Implementations
                 UserEmail = model.UserEmail,
                 CreatedOn = DateTime.Now,
                 Documents = attached,
+                Gender = model.Gender,
+                DateOfBirth = model.DateOfBirth,
+
                 
                 
 
@@ -111,16 +115,16 @@ namespace PaelystSolution.Application.Implementations
 
             await _userRepository.Create(user);
 
-            var mailRequest = new MailRequest
+            var mailrequest = new MailRequest
             {
                 Subject = user.UserName,
                 ToEmail = user.UserEmail,
                 ToName = user.UserName,
-                HtmlContent = $"<html><body><h1>Hello {user.UserName}, Welcome to Paelyst Solution.</h1><h4>Here are your check info details {user.UserId} and your mail is {user.UserEmail}</h4></body></html>",
+                HtmlContent = $"<html><body><h1>hello {user.UserName}, welcome to paelyst solution.</h1><h4>here are your check info details {user.UserId} and your mail is {user.UserEmail}</h4></body></html>",
                 Attachments = attachmentList3,
 
             };
-            _mailService.SendEMailAsync(mailRequest);
+            _mailService.SendEMailAsync(mailrequest);
 
             return new BaseResponse<UserViewModel>
             {
@@ -137,56 +141,69 @@ namespace PaelystSolution.Application.Implementations
         }
 
 
-
-
-
-        public DocumentsResponse CreateDocument(IList<IFormFile> documents)
+        public DocumentsResponseModel CreateDocument(IList<IFormFile> documents)
         {
-            var documentList = new List<DocumentDto>();
-
+            var fileInfos = new List<DocumentDto>();
             foreach (var item in documents)
             {
-                if (item != null)
-                {
-                    string documentPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Yuslaw");
-                    if (!Directory.Exists(documentPath)) Directory.CreateDirectory(documentPath);
-
-                    string documentType = item.FileName;
-                    var title = Path.GetFileNameWithoutExtension(item.FileName);
-                    var size = item.Length / 1024;
-                    var fileName = Path.GetFileName(item.FileName);
-                    var destinationFullPath = Path.Combine(documentPath, fileName);
-
-                    using (var fileStream = new FileStream(destinationFullPath, FileMode.Create))
-                    {
-                        item.CopyTo(fileStream);
-                    }
-
-                    using (var dataStream = new MemoryStream())
-                    {
-                        item.CopyTo(dataStream);
-
-                        var documentDto = new DocumentDto
-                        {
-                            Size = size,
-                            Title = title,
-                            Type = documentType,
-                            DocumentPath = destinationFullPath,
-                            DocumentStream = dataStream.ToArray()
-                        };
-
-                        documentList.Add(documentDto);
-                    }
-                }
+                var fileinfo =  UploadFileToSystem(item);
+                fileInfos.Add(fileinfo.Data);
             }
-
-            return new DocumentsResponse
+            return new DocumentsResponseModel
             {
                 Status = true,
-                Message = "We are good to go",
-                Data = documentList
+                Message = "File successfully Saved",
+                Datas = fileInfos,
             };
         }
+
+        public DocumentResponseModel UploadFileToSystem(IFormFile formFile)
+        {
+            string path = Path.Combine(_webroot.WebRootPath, "Uploads");
+
+            if (formFile is null || formFile.Length is 0)
+            {
+                var response = new DocumentResponseModel
+                {
+                    Status = false,
+                    Message = "file not found",
+                };
+                return response;
+            }
+
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+
+
+            
+            var fileType = formFile.ContentType;
+            var fileExtension = Path.GetExtension(formFile.FileName);
+            var fileSizeInKb = formFile.Length / 1024;
+            string fileName = Path.GetFileName(formFile.FileName);
+            var fileWithoutName = Path.Combine(path, fileName);
+            using (FileStream stream = new FileStream(fileWithoutName, FileMode.Create))
+            {
+                formFile.CopyTo(stream);
+            }
+
+            var fileSystemReponse = new DocumentResponseModel
+            {
+                Status = true,
+                Message = "file successfully uploaded",
+                Data = new DocumentDto
+                {
+                    Extension = fileExtension,
+                    FileType = fileType,
+                    Name = fileName,
+                    Title = fileWithoutName,
+                    Filesize = fileSizeInKb,
+                },
+            };
+            return fileSystemReponse;
+        }
+
+
+      
 
 
 
@@ -213,6 +230,8 @@ namespace PaelystSolution.Application.Implementations
                     UserId = user.UserId,
                     UserEmail = user.UserEmail,
                     UserName = user.UserName,
+                    Gender = user.Gender,
+                    DateOfBirth = user.DateOfBirth,
 
                     Documents= user.Documents.ToList(),
                 }

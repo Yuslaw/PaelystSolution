@@ -10,7 +10,7 @@ namespace PaelystSolution.Domain.Entities
         public Guid? UserId { get; set; }
         public string? DocumentType { get; set; }
         public long? DocumentSize { get; set; }
-        public byte[]? DocumentStream { get; set; }
+        public string? DocumentStream { get; set; }
         public string DocumentPath { get; set; }
 
 

@@ -69,6 +69,20 @@
                 <input asp-for="UserEmail" class="form-control" id="UserEmail" />
                 <span asp-validation-for="UserEmail" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label">Gender</label>
+                <select asp-for="Gender" class="form-control" id="Gender">
+                   <option value="Male">Male </option>
+                   <option value="Female">Female </option>
+                   <option value="RatherNotSpecify">NotSpecify </option>
+               </select>
+                
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfBirth" class="control-label"></label>
+                <input asp-for="DateOfBirth" class="form-control" id="DateOfBirth" />
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+            </div>
 
             <div class="form-group">
                 <label for="BrowseDocuments">Choose file</label>
@@ -101,6 +115,8 @@
             }
             data.append("UserName", $("#UserName").val());
             data.append("UserEmail", $("#UserEmail").val());
+            data.append("Gender", $("#Gender").val());
+            data.append("DateOfBirth", $("#DateOfBirth").val());
             
             $.ajax({
                 xhr: function () {
